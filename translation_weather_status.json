@@ -1,0 +1,277 @@
+[
+  {
+    "id": 200,
+    "en": "thunderstorm with light rain",
+    "ru": "гроза с легким дождем"
+  },
+  {
+    "id": 201,
+    "en": "thunderstorm with rain",
+    "ru": "гроза с дождем"
+  },
+  {
+    "id": 202,
+    "en": "thunderstorm with heavy rain",
+    "ru": "гроза с сильным дождем"
+  },
+  {
+    "id": 210,
+    "en": "light thunderstorm",
+    "ru": "легкая гроза"
+  },
+  {
+    "id": 211,
+    "en": "thunderstorm",
+    "ru": "гроза"
+  },
+  {
+    "id": 212,
+    "en": "heavy thunderstorm",
+    "ru": "сильная гроза"
+  },
+  {
+    "id": 221,
+    "en": "ragged thunderstorm",
+    "ru": "рваная гроза"
+  },
+  {
+    "id": 230,
+    "en": "thunderstorm with light drizzle",
+    "ru": "гроза с легкой моросью"
+  },
+  {
+    "id": 231,
+    "en": "thunderstorm with drizzle",
+    "ru": "гроза с моросящим дождем"
+  },
+  {
+    "id": 232,
+    "en": "thunderstorm with heavy drizzle",
+    "ru": "гроза с сильным моросящим дождем"
+  },
+  {
+    "id": 300,
+    "en": "light intensity drizzle",
+    "ru": "морось легкой интенсивности"
+  },
+  {
+    "id": 301,
+    "en": "drizzle",
+    "ru": "морось"
+  },
+  {
+    "id": 302,
+    "en": "heavy intensity drizzle",
+    "ru": "морось сильной интенсивности"
+  },
+  {
+    "id": 310,
+    "en": "light intensity drizzle rain",
+    "ru": "моросящий дождь легкой интенсивности"
+  },
+  {
+    "id": 311,
+    "en": "drizzle rain",
+    "ru": "моросящий дождь"
+  },
+  {
+    "id": 312,
+    "en": "heavy intensity drizzle rain",
+    "ru": "моросящий дождь сильной интенстивности"
+  },
+  {
+    "id": 313,
+    "en": "shower rain and drizzle",
+    "ru": "ливень и морось"
+  },
+  {
+    "id": 314,
+    "en": "heavy shower rain and drizzle",
+    "ru": "ливень сильной интенсивности и морось"
+  },
+  {
+    "id": 321,
+    "en": "shower drizzle",
+    "ru": "дождевая морось"
+  },
+  {
+    "id": 500,
+    "en": "light rain",
+    "ru": "небольшой дождь"
+  },
+  {
+    "id": 501,
+    "en": "moderate rain",
+    "ru": "умеренный дождь"
+  },
+  {
+    "id": 502,
+    "en": "heavy intensity rain",
+    "ru": "дождь сильной интенсивности"
+  },
+  {
+    "id": 503,
+    "en": "very heavy rain",
+    "ru": "очень сильный дождь"
+  },
+  {
+    "id": 504,
+    "en": "extreme rain",
+    "ru": "экстримальный дождь"
+  },
+  {
+    "id": 511,
+    "en": "freezing rain",
+    "ru": "ледяной дождь"
+  },
+  {
+    "id": 520,
+    "en": "light intensity shower rain",
+    "ru": "ливень легкой интенсивности"
+  },
+  {
+    "id": 521,
+    "en": "shower rain",
+    "ru": "ливень"
+  },
+  {
+    "id": 522,
+    "en": "heavy intensity shower rain",
+    "ru": "ливень сильной интенсивности"
+  },
+  {
+    "id": 531,
+    "en": "ragged shower rain",
+    "ru": "рваный ливень"
+  },
+  {
+    "id": 600,
+    "en": "light snow",
+    "ru": "легкий снег"
+  },
+  {
+    "id": 601,
+    "en": "snow",
+    "ru": "снег"
+  },
+  {
+    "id": 602,
+    "en": "Heavy snow",
+    "ru": "сильный снегопад"
+  },
+  {
+    "id": 611,
+    "en": "Sleet",
+    "ru": "мокрый снег"
+  },
+  {
+    "id": 612,
+    "en": "Light shower sleet",
+    "ru": "легкий мокрый снег"
+  },
+  {
+    "id": 613,
+    "en": "Shower sleet",
+    "ru": "ливневый мокрый снег"
+  },
+  {
+    "id": 615,
+    "en": "Light rain and snow",
+    "ru": "легкий дождь и снег"
+  },
+  {
+    "id": 616,
+    "en": "Rain and snow",
+    "ru": "дождь и снег"
+  },
+  {
+    "id": 620,
+    "en": "Light shower snow",
+    "ru": "ливневый снег легкой интенсивности"
+  },
+  {
+    "id": 621,
+    "en": "Shower snow",
+    "ru": "ливневый снег"
+  },
+  {
+    "id": 622,
+    "en": "Heavy shower snow",
+    "ru": "ливневый снег сильной интенсивности"
+  },
+  {
+    "id": 701,
+    "en": "mist",
+    "ru": "дымка"
+  },
+  {
+    "id": 702,
+    "en": "Smoke",
+    "ru": "дым"
+  },
+  {
+    "id": 721,
+    "en": "Haze",
+    "ru": "Легкий туман"
+  },
+  {
+    "id": 731,
+    "en": "sand/ dust whirls",
+    "ru": "вихри песка / пыли"
+  },
+  {
+    "id": 741,
+    "en": "fog",
+    "ru": "туман"
+  },
+  {
+    "id": 751,
+    "en": "sand",
+    "ru": "песок"
+  },
+  {
+    "id": 761,
+    "en": "dust",
+    "ru": "пыль"
+  },
+  {
+    "id": 762,
+    "en": "volcanic ash",
+    "ru": "вулканический пепел"
+  },
+  {
+    "id": 771,
+    "en": "squalls",
+    "ru": "шквалы"
+  },
+  {
+    "id": 781,
+    "en": "tornado",
+    "ru": "торнадо"
+  },
+  {
+    "id": 800,
+    "en": "clear sky",
+    "ru": "чистое небо"
+  },
+  {
+    "id": 801,
+    "en": "few clouds: 11-25%",
+    "ru": "немного облаков: 11-25%"
+  },
+  {
+    "id": 802,
+    "en": "scattered clouds: 25-50%",
+    "ru": "рассеянные облака: 25-50%"
+  },
+  {
+    "id": 803,
+    "en": "broken clouds: 51-84%",
+    "ru": "разбитые облака: 51-84%"
+  },
+  {
+    "id": 804,
+    "en": "overcast clouds: 85-100%",
+    "ru": "пасмурные облака: 85-100%"
+  }
+]

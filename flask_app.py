@@ -177,6 +177,11 @@ def hello_world():
                 user_id=data['object']['user_id'],
                 msg_text=processing_get_weather_forecast_button()
             )
+            return 'ok'
+        send_response(
+            user_id=data['object']['user_id'],
+            msg_text='Для работы воспользуйтесь кнопкой "Получить прогноз погоды"'
+        )
         return 'ok'
 
 

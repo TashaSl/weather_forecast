@@ -115,9 +115,9 @@ def get_weather() -> str:
     w = observation.get_weather()
     weather_value = """
     Сейчас в Минске {cur_temperature}°C, {weather_description}
-    ветер: {wind_speed} м/с {wind_description},\n
-    влажность: {humidity_value}%,\n
-    давление: {press_value} мм рт. ст.""".format(
+    ветер {wind_speed} м/с {wind_description},
+    влажность {humidity_value}%,
+    давление {press_value} мм рт. ст.""".format(
         cur_temperature=int(w.get_temperature('celsius')['temp']),
         weather_description=get_weather_description_by_code(w.get_weather_code()),
         wind_speed=w.get_wind()['speed'],

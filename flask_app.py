@@ -2,12 +2,15 @@ from flask import Flask, globals
 import vk
 import json
 import pyowm
+import redis
+import datetime
 from utils import get_translating_press_value, get_weather_description_by_code, get_wind_description
 from settings import *
 
 
 app = Flask(__name__)
 owm = pyowm.OWM(OWM_ACCESS_TOKEN)
+redis_weather_cache = redis.from_url(os.environ.get("REDIS_URL"))
 # owm.is_API_online()
 
 
@@ -64,21 +67,61 @@ def send_response(user_id, msg_text):
     )
 
 
-def get_weather():
+def check_request_freshness(updated_value: datetime.datetime) -> bool:
+    return (datetime.datetime.now() - updated_value).total_seconds() < WEATHER_UPDATING_THRESHOLD
+
+
+def get_weather_from_cache() -> str:
+    last_weather_request = redis_weather_cache.get('Minsk,BY')
+    if not last_weather_request or \
+            'today' not in last_weather_request or \
+            'updated' not in last_weather_request['today'] or \
+            'value' not in last_weather_request['today']:
+        return ''
+    updated_value = datetime.datetime.strptime(
+        last_weather_request['today']['updated'],
+        DATETIME_STRING_REPRESENTATION
+    )
+    weather_value = last_weather_request['today']['value']
+    if check_request_freshness(updated_value):
+        return weather_value
+    return ''
+
+
+def save_weather_to_cache(weather_value):
+    last_weather_request = redis_weather_cache.get('Minsk,BY')
+    if not last_weather_request:
+        last_weather_request = {}
+    last_weather_request.update({
+        'today': {
+            'value': weather_value,
+            'updated': datetime.datetime.now().strftime(DATETIME_STRING_REPRESENTATION)
+        }
+    })
+    redis_weather_cache.set('Minsk,BY', last_weather_request)
+
+
+def get_weather() -> str:
+    cache_weather = get_weather_from_cache()
+    if cache_weather:
+        return cache_weather
     observation = owm.weather_at_place('Minsk,BY')
     w = observation.get_weather()
-    return 'Сейчас в Минске {cur_temperature}°C, '\
-           '{weather_description}, '\
-           'ветер {wind_speed} м/с {wind_description}, '\
-           'влажность {humidity_value}%, '\
-           'давление {press_value} мм рт. ст.'.format(
-                cur_temperature=int(w.get_temperature('celsius')['temp']),
-                weather_description=get_weather_description_by_code(w.get_weather_code()),
-                wind_speed=w.get_wind()['speed'],
-                wind_description=get_wind_description(w.get_wind()['deg']),
-                humidity_value=w.get_humidity(),
-                press_value=get_translating_press_value(w.get_pressure()['press'])
-           )
+    weather_value = """
+    Сейчас в Минске {cur_temperature}°C,\n
+    {weather_description},\n
+    'ветер {wind_speed} м/с {wind_description},\n
+    'влажность {humidity_value}%,\n
+    'давление {press_value} мм рт. ст.""".format(
+        cur_temperature=int(w.get_temperature('celsius')['temp']),
+        weather_description=get_weather_description_by_code(w.get_weather_code()),
+        wind_speed=w.get_wind()['speed'],
+        wind_description=get_wind_description(w.get_wind()['deg']),
+        humidity_value=w.get_humidity(),
+        press_value=get_translating_press_value(w.get_pressure()['press'])
+    )
+    save_weather_to_cache(weather_value)
+    return weather_value
 
 
 @app.route('/', methods=['POST'])

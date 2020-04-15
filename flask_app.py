@@ -4,6 +4,7 @@ import json
 import pyowm
 import redis
 import datetime
+import logging
 from utils import get_translating_press_value, get_weather_description_by_code, get_wind_description
 from settings import *
 
@@ -11,7 +12,7 @@ from settings import *
 app = Flask(__name__)
 owm = pyowm.OWM(OWM_ACCESS_TOKEN)
 redis_weather_cache = redis.from_url(os.environ.get("REDIS_URL"))
-# owm.is_API_online()
+logger = logging.getLogger(__name__)
 
 
 GET_WEATHER_BUTTON, HOURLY_FORECAST_BUTTON, CHOOSE_DAY_BUTTON = range(3)
@@ -72,7 +73,10 @@ def check_request_freshness(updated_value: datetime.datetime) -> bool:
 
 
 def get_weather_from_cache() -> str:
-    last_weather_request = redis_weather_cache.get('Minsk,BY')
+    # check if redis is available
+    if not redis_weather_cache.ping():
+        return ''
+    last_weather_request = redis_weather_cache.get(DEFAULT_CITY)
     if not last_weather_request:
         return ''
     else:
@@ -92,7 +96,10 @@ def get_weather_from_cache() -> str:
 
 
 def save_weather_to_cache(weather_value):
-    last_weather_request = redis_weather_cache.get('Minsk,BY')
+    # check if redis is available
+    if not redis_weather_cache.ping():
+        return ''
+    last_weather_request = redis_weather_cache.get(DEFAULT_CITY)
     if not last_weather_request:
         last_weather_request = {}
     else:
@@ -103,21 +110,27 @@ def save_weather_to_cache(weather_value):
             'updated': datetime.datetime.now().strftime(DATETIME_STRING_REPRESENTATION)
         }
     })
-    redis_weather_cache.set('Minsk,BY', json.dumps(last_weather_request))
+    redis_weather_cache.set(DEFAULT_CITY, json.dumps(last_weather_request))
 
 
 def get_weather() -> str:
     cache_weather = get_weather_from_cache()
+    logging.info('get cache value {0}'.format(cache_weather))
     if cache_weather:
-        print('used cache')
         return cache_weather
-    observation = owm.weather_at_place('Minsk,BY')
+
+    # check if owm is available
+    if not owm.is_API_online():
+        return 'Извините, сервис временно недоступен'
+
+    observation = owm.weather_at_place(DEFAULT_CITY)
     w = observation.get_weather()
     weather_value = """
-    Сейчас в Минске {cur_temperature}°C, {weather_description}
+    Сейчас в городе {city} {cur_temperature}°C, {weather_description}
     ветер {wind_speed} м/с {wind_description},
     влажность {humidity_value}%,
     давление {press_value} мм рт. ст.""".format(
+        city=DEFAULT_CITY,
         cur_temperature=int(w.get_temperature('celsius')['temp']),
         weather_description=get_weather_description_by_code(w.get_weather_code()),
         wind_speed=w.get_wind()['speed'],
@@ -132,14 +145,13 @@ def get_weather() -> str:
 @app.route('/', methods=['POST'])
 def hello_world():
     data = globals.request.get_json()
-    print(data)
+    logging.info('request data: {0}'.format(data))
     assert 'type' in data
     assert str(data.get('group_id', 0)) == GROUP_ID
     if data.get('type') == 'confirmation':
         return CALLBACK_API_CONFIRMATION_TOKEN
     elif data['type'] == 'message_new':
         if data.get('object', {}).get('out') == 1:
-            print('this is my msg')
             return 'ok'
         if data.get('object', {}).get('body', '').strip() == "Начать":
             send_response(
@@ -148,9 +160,14 @@ def hello_world():
             )
             return 'ok'
         if data.get('object', {}).get('body', '').strip() == "Получить прогноз погоды":
+            try:
+                msg_text = get_weather()
+            except Exception as e:
+                logger.error(e)
+                msg_text = 'Что-то пошло не так, попробуйте еще раз!'
             send_response(
                 user_id=data['object']['user_id'],
-                msg_text=get_weather()
+                msg_text=msg_text
             )
         return 'ok'
 

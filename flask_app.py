@@ -103,7 +103,7 @@ def save_weather_to_cache(weather_value):
             'updated': datetime.datetime.now().strftime(DATETIME_STRING_REPRESENTATION)
         }
     })
-    redis_weather_cache.set('Minsk,BY', json.dump(last_weather_request))
+    redis_weather_cache.set('Minsk,BY', json.dumps(last_weather_request))
 
 
 def get_weather() -> str:

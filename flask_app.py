@@ -45,7 +45,13 @@ BUTTONS = {
 }
 
 
-def send_response(user_id, msg_text):
+def send_response(user_id: int, msg_text: str):
+    '''
+    Send user with given user_id message with given msg_text and default button
+    :param user_id:
+    :param msg_text:
+    :return:
+    '''
     session = vk.Session()
     api = vk.API(session, v=5.50)
     api.messages.send(
@@ -69,10 +75,19 @@ def send_response(user_id, msg_text):
 
 
 def check_request_freshness(updated_value: datetime.datetime) -> bool:
+    '''
+    Check by updated_value if cache value was updated not far a long.
+    :param updated_value:
+    :return: True if cache is fresh otherwise False
+    '''
     return (datetime.datetime.now() - updated_value).total_seconds() < WEATHER_UPDATING_THRESHOLD
 
 
 def get_weather_forecast_from_cache() -> str:
+    '''
+    Check if redis available, load data from redis, check if cache value  is fresh
+    :return: cache value if all condition are met otherwise empty string
+    '''
     # check if redis is available
     if not redis_weather_cache.ping():
         return ''
@@ -95,7 +110,12 @@ def get_weather_forecast_from_cache() -> str:
     return ''
 
 
-def save_weather_to_cache(weather_value):
+def save_weather_to_cache(weather_value: str):
+    '''
+    Check if redis is available, set new weather_value and updated_value
+    :param weather_value: ready answer for user with weather forecast
+    :return:
+    '''
     # check if redis is available
     if not redis_weather_cache.ping():
         return ''
@@ -114,6 +134,10 @@ def save_weather_to_cache(weather_value):
 
 
 def get_fresh_weather_forecast() -> str:
+    '''
+    Check if OWM is avaiable otherwise return error message, make request, preprocess result according output format (see `README.md`)
+    :return: ready answer for user with weather forecast
+    '''
     # check if owm is available
     if not owm.is_API_online():
         return 'Извините, сервис временно недоступен'
@@ -138,6 +162,10 @@ def get_fresh_weather_forecast() -> str:
 
 
 def processing_get_weather_forecast_button() -> str:
+    '''
+    Call functions to get answer after press button "Получить прогноз погоды"
+    :return: ready answer for user
+    '''
     try:
         cache_weather = get_weather_forecast_from_cache()
     except Exception as e:

@@ -114,11 +114,10 @@ def get_weather() -> str:
     observation = owm.weather_at_place('Minsk,BY')
     w = observation.get_weather()
     weather_value = """
-    Сейчас в Минске {cur_temperature}°C,\n
-    {weather_description},\n
-    'ветер {wind_speed} м/с {wind_description},\n
-    'влажность {humidity_value}%,\n
-    'давление {press_value} мм рт. ст.""".format(
+    Сейчас в Минске {cur_temperature}°C, {weather_description}
+    ветер: {wind_speed} м/с {wind_description},\n
+    влажность: {humidity_value}%,\n
+    давление: {press_value} мм рт. ст.""".format(
         cur_temperature=int(w.get_temperature('celsius')['temp']),
         weather_description=get_weather_description_by_code(w.get_weather_code()),
         wind_speed=w.get_wind()['speed'],

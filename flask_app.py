@@ -72,7 +72,7 @@ def check_request_freshness(updated_value: datetime.datetime) -> bool:
     return (datetime.datetime.now() - updated_value).total_seconds() < WEATHER_UPDATING_THRESHOLD
 
 
-def get_weather_from_cache() -> str:
+def get_weather_forecast_from_cache() -> str:
     # check if redis is available
     if not redis_weather_cache.ping():
         return ''
@@ -113,12 +113,7 @@ def save_weather_to_cache(weather_value):
     redis_weather_cache.set(DEFAULT_CITY, json.dumps(last_weather_request))
 
 
-def get_weather() -> str:
-    cache_weather = get_weather_from_cache()
-    logging.info('get cache value {0}'.format(cache_weather))
-    if cache_weather:
-        return cache_weather
-
+def get_fresh_weather_forecast() -> str:
     # check if owm is available
     if not owm.is_API_online():
         return 'Извините, сервис временно недоступен'
@@ -130,7 +125,7 @@ def get_weather() -> str:
     ветер {wind_speed} м/с {wind_description},
     влажность {humidity_value}%,
     давление {press_value} мм рт. ст.""".format(
-        city=DEFAULT_CITY,
+        city=DEFAULT_CITY_REPRESENTATION,
         cur_temperature=int(w.get_temperature('celsius')['temp']),
         weather_description=get_weather_description_by_code(w.get_weather_code()),
         wind_speed=w.get_wind()['speed'],
@@ -140,6 +135,24 @@ def get_weather() -> str:
     )
     save_weather_to_cache(weather_value)
     return weather_value
+
+
+def processing_get_weather_forecast_button() -> str:
+    try:
+        cache_weather = get_weather_forecast_from_cache()
+    except Exception as e:
+        logger.error(e)
+        cache_weather = ''
+    if cache_weather:
+        return cache_weather
+    try:
+        weather = get_fresh_weather_forecast()
+    except Exception as e:
+        logger.error(e)
+        weather = ''
+    if weather:
+        return weather
+    return 'Что-то пошло не так, попробуйте еще раз!'
 
 
 @app.route('/', methods=['POST'])
@@ -160,14 +173,9 @@ def hello_world():
             )
             return 'ok'
         if data.get('object', {}).get('body', '').strip() == "Получить прогноз погоды":
-            try:
-                msg_text = get_weather()
-            except Exception as e:
-                logger.error(e)
-                msg_text = 'Что-то пошло не так, попробуйте еще раз!'
             send_response(
                 user_id=data['object']['user_id'],
-                msg_text=msg_text
+                msg_text=processing_get_weather_forecast_button()
             )
         return 'ok'
 

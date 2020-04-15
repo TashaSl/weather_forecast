@@ -86,7 +86,7 @@ def hello_world():
     data = globals.request.get_json()
     print(data)
     assert 'type' in data
-    assert data.get('group_id') == GROUP_ID
+    assert str(data.get('group_id', 0)) == GROUP_ID
     if data.get('type') == 'confirmation':
         return CALLBACK_API_CONFIRMATION_TOKEN
     elif data['type'] == 'message_new':

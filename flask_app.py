@@ -73,10 +73,13 @@ def check_request_freshness(updated_value: datetime.datetime) -> bool:
 
 def get_weather_from_cache() -> str:
     last_weather_request = redis_weather_cache.get('Minsk,BY')
-    if not last_weather_request or \
-            'today' not in last_weather_request or \
-            'updated' not in last_weather_request['today'] or \
-            'value' not in last_weather_request['today']:
+    if not last_weather_request:
+        return ''
+    else:
+        last_weather_request = json.loads(last_weather_request)
+    if last_weather_request.get('today') or \
+            last_weather_request['today'].get('updated') or \
+            last_weather_request['today'].get('value'):
         return ''
     updated_value = datetime.datetime.strptime(
         last_weather_request['today']['updated'],
@@ -92,18 +95,21 @@ def save_weather_to_cache(weather_value):
     last_weather_request = redis_weather_cache.get('Minsk,BY')
     if not last_weather_request:
         last_weather_request = {}
+    else:
+        last_weather_request = json.loads(last_weather_request)
     last_weather_request.update({
         'today': {
             'value': weather_value,
             'updated': datetime.datetime.now().strftime(DATETIME_STRING_REPRESENTATION)
         }
     })
-    redis_weather_cache.set('Minsk,BY', last_weather_request)
+    redis_weather_cache.set('Minsk,BY', json.dump(last_weather_request))
 
 
 def get_weather() -> str:
     cache_weather = get_weather_from_cache()
     if cache_weather:
+        print('used cache')
         return cache_weather
     observation = owm.weather_at_place('Minsk,BY')
     w = observation.get_weather()
